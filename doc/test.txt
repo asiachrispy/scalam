@@ -1,0 +1,57 @@
+
+val ff = sc.textFile("hdfs://name1:9000/test/spark-env.sh")
+val ct = ff.flatMap(line=>line.split(" ")).map(w=>(w,1)).reduceByKey(_+_)
+
+val kk = sc.textFile("hdfs://name1:9000/test/README.md").flatMap(_.split(" ")).map((_,1)).reduceByKey(_+_).collect()
+val ff = sc.textFile("hdfs://name1:9000/test/spark-env.sh").flatMap(_.split(" ")).map((_,1)).reduceByKey(_+_).collect()
+
+kk.map(x=>(x._2,x._1)).sortByKey(false).map(x=>(x._2,x._1)).collect()
+
+
+kk.map(x=>(x._2,x._1)).sortByKey(false).map(x=>(x._2,x._1)).saveAsTextFile("hdfs://name1:9000/test/out/")
+
+kk.map(x=>(x._2,x._1)).sortByKey(false).map(x=>(x._2,x._1)).filter(x=>(x._2>10)).saveAsTextFile("hdfs://name1:9000/test/out1/")
+kk.filter(x=>(x._2>10)).map(x=>(x._2,x._1)).sortByKey(false).map(x=>(x._2,x._1)).saveAsTextFile("hdfs://name1:9000/test/out2/")
+
+
+val vv = sc.textFile("hdfs://name1:9000/test/README.md").flatMap(_.split(" ")).map((_,1)).reduceByKey(_+_)
+.map(x=>(x._2,x._1)).sortByKey(false).map(x=>(x._2,x._1)).saveAsTextFile("hdfs://name1:9000/test/out/")
+
+---------
+val r1 = sc.parallelize(List((1,2),(3,4),(3,6)))
+
+val r1 = sc.parallelize(List((1,2),(3,4),(3,6)))
+
+----
+./bin/spark-submit --master spark://name1:7077 --class com.chris.scala.WordCount "/data1/software/spark-1.0.0-bin-hadoop2/mjar/scalam-1.0.0.jar"
+./bin/spark-submit --class com.chris.scala.WordCount "/data1/software/spark-1.0.0-bin-hadoop2/mjar/scalam-1.0.0.jar" spark://name1:7077 hdfs://name1:9000/test/README hdfs://name1:9000/test/out4
+
+---
+val in = sc.wholeTextFiles ("hdfs://name1:9000/test/course1")
+in.collect
+
+res8: Array[(String, String)] =
+Array((hdfs://name1:9000/test/course1/a.txt,"asia chris
+chris python
+i love python
+asia is my first name
+chris is my second name
+"), (hdfs://name1:9000/test/course1/b.txt,"asia
+chris
+python
+name
+"))
+
+sc.wholeTextFiles("hdfs://name1:9000/test/course1").map(s => {val name = s._1;val va = s._2;name.split("/")(5).concat("\t").concat(va.split(" ").mkString(" "))}).saveAsTextFile("/test/out1")
+
+
+import scala.collection.mutable.ArrayBuffer
+val in = sc.textFile("hdfs://name1:9000/test/course1/")
+val words = in.flatMap(line => line.split(" ")).toArray
+val wordss = new ArrayBuffer[String]()
+for (i <- 1 until words.size) {
+    val key = words(i - 1) + words(i)
+    wordss += key
+}
+val counts = sc.parallelize(wordss.toSeq).map((_, 1)).reduceByKey(_ + _)
+counts.saveAsTextFile("/test/out2")

@@ -1,0 +1,14 @@
+-- 测试环境可行性
+1. 导出scalam-1.0.0.jar包
+2. 上传到name1 master节点的$spark_home/mjar/目录下
+3. 执行脚本
+    3.1 集群运行默认数据./bin/spark-submit --master spark://name1:7077 --class com.chris.scala.WordCount "/data1/software/spark-1.0.0-bin-hadoop2/mjar/scalam-1.0.0.jar"
+    3.2 使用hdfs上的数据在集群运行./bin/spark-submit --class com.chris.scala.WordCount "/data1/software/spark-1.0.0-bin-hadoop2/mjar/scalam-1.0.0.jar" spark://name1:7077 hdfs://name1:9000/test/README hdfs://name1:9000/test/out4
+
+-- 实际需求
+1. 任务1
+    先对hdfs上的职位数据进行分词，并保留在分词后的结果到hdfs上
+2. 任务2
+    对分词后的数据进行统计分析
+
+
